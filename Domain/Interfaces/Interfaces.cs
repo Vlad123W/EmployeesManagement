@@ -38,7 +38,6 @@ namespace EmployeesManagemant.Domain.Interfaces
         IJobHistoryRepository JobHistory { get; }
         IGenericRepository<Country> Countries { get; }
         IGenericRepository<Location> Locations { get; }
-        IGenericRepository<Vacation> Vacations { get; }
         IGenericRepository<Region> Regions { get; }
 
         Task<int> SaveChangesAsync();

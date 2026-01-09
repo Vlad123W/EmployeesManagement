@@ -9,6 +9,6 @@ namespace EmployeesManagemant.Infrastructure.Repositories
                 : GenericRepository<JobHistory>(context), IJobHistoryRepository
     {
         public async Task<IEnumerable<JobHistory>> GetByEmployeeIdAsync(long employeeId)
-            => await _dbSet.Where(x => x.EmployeeId == employeeId).ToListAsync();
+            => await _dbSet.Where(x => x.Id == employeeId).ToListAsync();
     }
 }

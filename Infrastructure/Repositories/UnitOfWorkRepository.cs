@@ -1,5 +1,7 @@
-﻿using EmployeesManagemant.Domain.Entities;
+﻿using EmployeesManagemant.Data;
+using EmployeesManagemant.Domain.Entities;
 using EmployeesManagemant.Domain.Interfaces;
+using EmployeesManagemant.Infrastructure;
 using EmployeesManagemant.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,7 +12,7 @@ namespace Infrastructure.Repositories
 {
     internal class UnitOfWork : IUnitOfWork
     {
-        private readonly DbContext _context;
+        private readonly AppDbContext _context;
         public IEmployeeRepository Employees { get; }
 
         public IGenericRepository<Job> Jobs { get; }
@@ -23,11 +25,9 @@ namespace Infrastructure.Repositories
 
         public IGenericRepository<Location> Locations { get; }
 
-        public IGenericRepository<Vacation> Vacations { get; }
-
         public IGenericRepository<Region> Regions { get; }
 
-        public UnitOfWork(DbContext context)
+        public UnitOfWork(AppDbContext context)
         {
             _context = context;
             Employees = new EmployeeRepository(_context);
@@ -36,7 +36,6 @@ namespace Infrastructure.Repositories
             JobHistory = new JobHistoryRepository(_context);
             Countries = new GenericRepository<Country>(_context);
             Locations = new GenericRepository<Location>(_context);
-            Vacations = new GenericRepository<Vacation>(_context);
             Regions = new GenericRepository<Region>(_context);
         }
 
