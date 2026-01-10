@@ -2,7 +2,7 @@
 using EmployeesManagemant.Domain.Interfaces;
 using System.Threading.Tasks;
 
-namespace EmployeesManagemant.Controllers
+namespace EmployeesManagement.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -11,16 +11,16 @@ namespace EmployeesManagemant.Controllers
         public readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         [HttpGet]
-        public async Task<IEnumerable<object>> Get()
+        public async Task<IActionResult> Get()
         {
-            return await _unitOfWork.Regions.GetAllAsync();
+            return Ok(await _unitOfWork.Employees.GetPartiallyAsync(5, 10));
         }
 
         // GET api/<EmployeesController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> Get(string id)
         {
-            return "value";
+            return Ok(await _unitOfWork.Countries.GetByIdAsync(id));
         }
 
         // POST api/<EmployeesController>

@@ -1,6 +1,6 @@
 using EmployeesManagemant.Data;
 using EmployeesManagemant.Domain.Interfaces;
-using Infrastructure.Repositories;
+using EmployeesManagemant.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

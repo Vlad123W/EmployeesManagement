@@ -10,7 +10,7 @@ namespace EmployeesManagemant.Infrastructure.Repositories
         protected readonly DbContext _context = context;
         protected readonly DbSet<T> _dbSet = context.Set<T>();
 
-        public async Task<T?> GetByIdAsync(object id) => await _dbSet.FindAsync(id);
+        public async Task<T?> GetByIdAsync<TId>(TId id) => await _dbSet.FindAsync(id);
 
         public async Task<IEnumerable<T>> GetAllAsync() => await _dbSet.ToListAsync();
 
@@ -19,5 +19,10 @@ namespace EmployeesManagemant.Infrastructure.Repositories
         public void Update(T entity) => _dbSet.Update(entity);
 
         public void Delete(T entity) => _dbSet.Remove(entity);
+
+        public async Task<IEnumerable<T>> GetPartiallyAsync(int from, int count)
+        {
+            return await _dbSet.Skip(from).Take(count).ToListAsync();
+        }
     }
 }
