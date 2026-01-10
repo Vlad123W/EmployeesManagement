@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using EmployeesManagemant.Domain.Interfaces;
-using System.Threading.Tasks;
 
 namespace EmployeesManagement.Controllers
 {
@@ -17,10 +16,10 @@ namespace EmployeesManagement.Controllers
         }
 
         // GET api/<EmployeesController>/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string id)
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> Get(int id)
         {
-            return Ok(await _unitOfWork.Countries.GetByIdAsync(id));
+            return Ok(await _unitOfWork.Employees.GetWithDetailsAsync(Convert.ToInt64(id)));
         }
 
         // POST api/<EmployeesController>

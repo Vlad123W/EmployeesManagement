@@ -1,10 +1,6 @@
 ﻿using EmployeesManagemant.Domain.Entities;
 using EmployeesManagemant.Domain.Interfaces;
-using EmployeesManagemant.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EmployeesManagemant.Infrastructure.Repositories
 {
@@ -22,6 +18,9 @@ namespace EmployeesManagemant.Infrastructure.Repositories
             return await _dbSet
                 .Include(e => e.Job)
                 .Include(e => e.Department)
+                .Include(e => e.Manager)
+                .Include(e => e.Department)
+                .Include(e => e.JobHistories)
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
     }

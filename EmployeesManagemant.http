@@ -1,5 +1,5 @@
 @EmployeesManagement_HostAddress = http://localhost:5024
 
-GET {{EmployeesManagement_HostAddress}}/api/employeesmanagement/AR
+GET {{EmployeesManagement_HostAddress}}/api/employeesmanagement/120
 Accept: application/json
 ###
