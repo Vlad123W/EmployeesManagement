@@ -1,37 +1,39 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using EmployeesManagemant.Domain.Interfaces;
 using EmployeesManagemant.Domain.Entities;
+using EmployeesManagement.Application.Interfaces;
 
 namespace EmployeesManagement.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EmployeesManagementController(IUnitOfWork unitOfWork) : ControllerBase
+    public class EmployeesManagementController : ControllerBase
     {
-        public readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly IEmployeeService _employeeService;
+
+        public EmployeesManagementController(IEmployeeService employeeService)
+        {
+            _employeeService = employeeService;
+        }
 
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            return Ok(await _unitOfWork.Employees.GetPartiallyAsync(5, 10));
+            return Ok(await _employeeService.GetAllAsync());
         }
 
         // GET api/<EmployeesController>/5
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id)
         {
-            return Ok(await _unitOfWork.Employees.GetWithDetailsAsync(Convert.ToInt64(id)));
+            return Ok();
         }
 
         // POST api/<EmployeesController>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Employee employee)
         {
-            if (employee == null) return BadRequest("Data is null");
-
-            await _unitOfWork.Employees.AddAsync(employee);
-
-            return CreatedAtAction(nameof(Post), new {id = employee.Id });
+            return Ok();
         }
 
         // PUT api/<EmployeesController>/5

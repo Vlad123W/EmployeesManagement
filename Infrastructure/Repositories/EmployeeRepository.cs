@@ -1,10 +1,11 @@
-﻿using EmployeesManagemant.Domain.Entities;
+﻿using EmployeesManagemant.Data;
+using EmployeesManagemant.Domain.Entities;
 using EmployeesManagemant.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmployeesManagemant.Infrastructure.Repositories
 {
-    public class EmployeeRepository(DbContext context) : GenericRepository<Employee>(context), IEmployeeRepository
+    public class EmployeeRepository(AppDbContext context) : GenericRepository<Employee>(context), IEmployeeRepository
     {
         public async Task<IEnumerable<Employee>> GetEmployeesByDepartmentAsync(long departmentId)
         {

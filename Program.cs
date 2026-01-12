@@ -1,6 +1,8 @@
 using EmployeesManagemant.Data;
 using EmployeesManagemant.Domain.Interfaces;
 using EmployeesManagemant.Infrastructure.Repositories;
+using EmployeesManagement.Application.Interfaces;
+using EmployeesManagement.Application.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +13,9 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
 var app = builder.Build();
 
