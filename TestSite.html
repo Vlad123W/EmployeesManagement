@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Управление персоналом</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 40px;
+            background: #f4f4f9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            background: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Список сотрудников</h1>
+    <button class="btn" onclick="loadEmployees()">Обновить данные</button>
+    <br><br>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Имя</th>
+                <th>Email</th>
+                <th>Зарплата</th>
+                <th>Департамент</th>
+            </tr>
+        </thead>
+        <tbody id="employeesTable">
+        </tbody>
+    </table>
+
+    <script>
+        async function loadEmployees() {
+            const response = await fetch('https://localhost:7160/api/employeesmanagement'); 
+            const data = await response.json();
+
+            const tableBody = document.getElementById('employeesTable');
+            tableBody.innerHTML = ''; 
+
+            data.forEach(emp => {
+                const row = `<tr>
+                    <td>${emp.employeeId}</td>
+                    <td>${emp.fullName || (emp.firstName + ' ' + emp.lastName)}</td>
+                    <td>${emp.email}</td>
+                    <td>${emp.salary} $</td>
+                    <td>${emp.departmentId || '---'}</td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        loadEmployees();
+    </script>
+</body>
+</html>

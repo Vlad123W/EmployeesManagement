@@ -22,27 +22,23 @@ namespace EmployeesManagement.Controllers
             return Ok(await _employeeService.GetAllAsync());
         }
 
-        // GET api/<EmployeesController>/5
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id)
         {
             return Ok();
         }
 
-        // POST api/<EmployeesController>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Employee employee)
         {
             return Ok();
         }
 
-        // PUT api/<EmployeesController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
         }
 
-        // DELETE api/<EmployeesController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
