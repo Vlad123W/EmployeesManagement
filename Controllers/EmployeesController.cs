@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using EmployeesManagemant.Domain.Interfaces;
+using EmployeesManagemant.Domain.Entities;
 
 namespace EmployeesManagement.Controllers
 {
@@ -24,8 +25,13 @@ namespace EmployeesManagement.Controllers
 
         // POST api/<EmployeesController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> Post([FromBody] Employee employee)
         {
+            if (employee == null) return BadRequest("Data is null");
+
+            await _unitOfWork.Employees.AddAsync(employee);
+
+            return CreatedAtAction(nameof(Post), new {id = employee.Id });
         }
 
         // PUT api/<EmployeesController>/5
