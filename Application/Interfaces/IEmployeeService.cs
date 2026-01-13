@@ -6,6 +6,6 @@ namespace EmployeesManagement.Application.Interfaces
     {
         Task<IEnumerable<EmployeeDTO>> GetAllAsync();
         Task<EmployeeDTO> GetByIdAsync(long id);
-        Task<EmployeeDTO> CreateAsync(EmployeeDTO dto);
+        Task<Employee> CreateAsync(EmployeeDTO dto);
     }
 }

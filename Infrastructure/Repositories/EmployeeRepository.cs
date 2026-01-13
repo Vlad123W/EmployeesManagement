@@ -20,8 +20,6 @@ namespace EmployeesManagemant.Infrastructure.Repositories
                 .Include(e => e.Job)
                 .Include(e => e.Department)
                 .Include(e => e.Manager)
-                .Include(e => e.Department)
-                .Include(e => e.JobHistories)
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
     }

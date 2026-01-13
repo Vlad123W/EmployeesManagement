@@ -11,8 +11,8 @@ namespace EmployeesManagemant.Domain.Interfaces
         Task<IEnumerable<T>> GetAllAsync();
         Task<IEnumerable<T>> GetPartiallyAsync(int from, int count);
         Task AddAsync(T entity);
-        void Update(T entity);
-        void Delete(T entity);
+        Task Update(T entity);
+        Task Delete(T entity);
     }
 
     public interface IEmployeeRepository : IGenericRepository<Employee>

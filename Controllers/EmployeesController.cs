@@ -25,23 +25,25 @@ namespace EmployeesManagement.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id)
         {
-            return Ok();
+            return Ok(await _employeeService.GetByIdAsync(id));
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Employee employee)
+        public async Task<IActionResult> Post([FromBody] EmployeeDTO employee)
+        {
+            return Ok(await _employeeService.CreateAsync(employee));
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] EmployeeDTO employee)
         {
             return Ok();
         }
 
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            return Ok();
         }
     }
 }

@@ -9,9 +9,23 @@ namespace EmployeesManagement.Application.Services
     {
         private readonly IEmployeeRepository _employeeRepository = employeeRepository;
 
-        public Task<EmployeeDTO> CreateAsync(EmployeeDTO dto)
+        public async Task<Employee> CreateAsync(EmployeeDTO dto)
         {
-            throw new NotImplementedException();
+            ArgumentNullException.ThrowIfNull(dto);
+
+            var employee = new Employee
+            {
+                Id = dto.EmployeeId,
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                HireDate = dto.HireDate,
+                ManagerId = dto.ManagerId,
+                DepartmentId = dto.DepartmentId
+            };
+
+            await _employeeRepository.AddAsync(employee);
+
+            return employee;
         }
 
         public async Task<IEnumerable<EmployeeDTO>> GetAllAsync()
@@ -20,23 +34,26 @@ namespace EmployeesManagement.Application.Services
             
             return emplyees.Select(empl => new EmployeeDTO
             {
-                EmployeeId = empl.Id,
                 FirstName = empl.FirstName,
                 LastName = empl.LastName,
-                Email = empl.Email,
-                PhoneNumber = empl.PhoneNumber,
                 HireDate = empl.HireDate,
-                JobId = empl.JobId,
-                Salary = empl.Salary,
-                CommissionPct = empl.CommissionPct,
                 ManagerId = empl.ManagerId,
                 DepartmentId = empl.DepartmentId
             });
         }
 
-        public Task<EmployeeDTO> GetByIdAsync(long id)
+        public async Task<EmployeeDTO> GetByIdAsync(long id)
         {
-            throw new NotImplementedException();
+            var emplyee = await _employeeRepository.GetByIdAsync(id);
+
+            return new EmployeeDTO
+            {
+                FirstName = emplyee!.FirstName,
+                LastName = emplyee.LastName,
+                HireDate = emplyee.HireDate,
+                ManagerId = emplyee.ManagerId,
+                DepartmentId = emplyee.DepartmentId
+            };
         }
     }
 }
