@@ -34,16 +34,16 @@ namespace EmployeesManagement.Controllers
             return Ok(await _employeeService.CreateAsync(employee));
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<IActionResult> Put(int id, [FromBody] EmployeeDTO employee)
         {
             return Ok();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
-            return Ok();
+            return Ok(await _employeeService.DeleteAsync(id));
         }
     }
 }

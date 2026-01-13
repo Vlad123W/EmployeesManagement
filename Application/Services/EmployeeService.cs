@@ -52,6 +52,7 @@ namespace EmployeesManagement.Application.Services
             
             return emplyees.Select(empl => new EmployeeDTO
             {
+                EmployeeId = empl.Id,
                 FirstName = empl.FirstName,
                 LastName = empl.LastName,
                 HireDate = empl.HireDate,

@@ -2,81 +2,282 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Управление персоналом</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR API Tester</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
         body {
-            font-family: sans-serif;
-            margin: 40px;
-            background: #f4f4f9;
+            background-color: #f0f2f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
+        .main-container {
+            margin-top: 40px;
+            margin-bottom: 40px;
         }
 
-        th, td {
-            padding: 12px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-
-        th {
-            background: #007bff;
-            color: white;
-        }
-
-        .btn {
-            padding: 10px 15px;
-            background: #28a745;
-            color: white;
+        .card {
             border: none;
-            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-radius: 12px;
+        }
+
+        .card-header {
+            background: white;
+            border-bottom: 2px solid #f0f2f5;
+            font-weight: 600;
+            padding: 1.2rem;
+            border-radius: 12px 12px 0 0 !important;
+        }
+
+        .btn-primary {
+            background-color: #0d6efd;
+            border: none;
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+
+        .table thead th {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            color: #495057;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .loading-spinner {
+            display: none;
         }
     </style>
 </head>
 <body>
 
-    <h1>Список сотрудников</h1>
-    <button class="btn" onclick="loadEmployees()">Обновить данные</button>
-    <br><br>
+    <div class="container main-container">
+        <div class="row mb-4">
+            <div class="col">
+                <h2 class="fw-bold text-primary"><i class="bi bi-people-fill me-2"></i>HR Management System</h2>
+                <p class="text-muted">Панель тестирования API для репозитория EmployeesManagement</p>
+            </div>
+        </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Имя</th>
-                <th>Email</th>
-                <th>Зарплата</th>
-                <th>Департамент</th>
-            </tr>
-        </thead>
-        <tbody id="employeesTable">
-        </tbody>
-    </table>
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-person-plus-fill me-2 text-success"></i>Новый сотрудник</span>
+                    </div>
+                    <div class="card-body p-4">
+                        <form id="createForm" onsubmit="createEmployee(event)">
+                            <div class="mb-3">
+                                <label for="firstName" class="form-label">Имя *</label>
+                                <input type="text" class="form-control" id="firstName" required placeholder="Иван">
+                            </div>
+                            <div class="mb-3">
+                                <label for="lastName" class="form-label">Фамилия *</label>
+                                <input type="text" class="form-control" id="lastName" required placeholder="Иванов">
+                            </div>
+                            <div class="mb-3">
+                                <label for="hireDate" class="form-label">Дата найма *</label>
+                                <input type="date" class="form-control" id="hireDate" required>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <label for="departmentId" class="form-label">ID Отдела</label>
+                                    <input type="number" class="form-control" id="departmentId" placeholder="Напр: 2">
+                                </div>
+                                <div class="col">
+                                    <label for="managerId" class="form-label">ID Менеджера</label>
+                                    <input type="number" class="form-control" id="managerId" placeholder="Напр: 1">
+                                </div>
+                            </div>
 
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <span class="loading-spinner spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                    <i class="bi bi-send me-2"></i>Отправить в БД
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-list-ul me-2 text-primary"></i>Список сотрудников в базе</span>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="loadEmployees()">
+                            <i class="bi bi-arrow-clockwise me-1"></i>Обновить
+                        </button>
+                    </div>
+                    <div class="card-body p-0 table-responsive">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>ФИО</th>
+                                    <th>Дата найма</th>
+                                    <th>Отдел ID</th>
+                                    <th>Менеджер ID</th>
+                                    <th class="text-end">Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="employeesTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="liveToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="toastMessage">
+                    Успешно!
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        async function loadEmployees() {
-            const response = await fetch('https://localhost:7160/api/employeesmanagement'); 
-            const data = await response.json();
+       
+        const API_BASE_URL = 'https://localhost:7160'; 
+        const ENDPOINT = `${API_BASE_URL}/api/employeesmanagement`;
 
-            const tableBody = document.getElementById('employeesTable');
-            tableBody.innerHTML = ''; 
+        const tableBody = document.getElementById('employeesTableBody');
+        const createForm = document.getElementById('createForm');
+        const toastEl = document.getElementById('liveToast');
+        const toast = new bootstrap.Toast(toastEl);
+        const submitBtn = createForm.querySelector('button[type="submit"]');
+        const spinner = submitBtn.querySelector('.loading-spinner');
 
-            data.forEach(emp => {
-                const row = `<tr>
-                    <td>${emp.employeeId}</td>
-                    <td>${emp.fullName || (emp.firstName + ' ' + emp.lastName)}</td>
-                    <td>${emp.email}</td>
-                    <td>${emp.salary} $</td>
-                    <td>${emp.departmentId || '---'}</td>
-                </tr>`;
-                tableBody.innerHTML += row;
-            });
+        function showToast(message, isError = false) {
+            document.getElementById('toastMessage').textContent = message;
+            toastEl.classList.remove('bg-success', 'bg-danger');
+            toastEl.classList.add(isError ? 'bg-danger' : 'bg-success');
+            toast.show();
         }
 
-        loadEmployees();
+        function toggleLoading(isLoading) {
+            submitBtn.disabled = isLoading;
+            spinner.style.display = isLoading ? 'inline-block' : 'none';
+        }
+
+        async function loadEmployees() {
+            tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4 text-muted">Загрузка данных...</td></tr>';
+            try {
+                const response = await fetch(ENDPOINT);
+                if (!response.ok) throw new Error(`Ошибка HTTP: ${response.status}`);
+                const data = await response.json();
+
+                tableBody.innerHTML = ''; 
+
+                if (data.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4 text-muted">База данных пуста</td></tr>';
+                    return;
+                }
+
+                data.forEach(emp => {
+                    const fullName = emp.fullName || `${emp.firstName} ${emp.lastName}`;
+                    const deptIdDisplay = emp.departmentId ? `<span class="badge bg-light text-dark border">${emp.departmentId}</span>` : '<span class="text-muted small">-</span>';
+                    const mgrIdDisplay = emp.managerId ? `<span class="badge bg-light text-dark border">${emp.managerId}</span>` : '<span class="text-muted small">-</span>';
+
+                    const row = `
+                        <tr>
+                            <td><strong>#${emp.employeeId}</strong></td>
+                            <td>${fullName}</td>
+                            <td>${new Date(emp.hireDate).toLocaleDateString('ru-RU')}</td>
+                            <td>${deptIdDisplay}</td>
+                            <td>${mgrIdDisplay}</td>
+                            <td class="text-end">
+                                <button class="btn btn-outline-danger btn-sm" onclick="deleteEmployee(${emp.id})">
+                                    <i class="bi bi-trash3-fill"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.innerHTML += row;
+                });
+            } catch (error) {
+                console.error('Ошибка загрузки:', error);
+                tableBody.innerHTML = `<tr><td colspan="6" class="text-center p-4 text-danger">
+                    Ошибка подключения к API.<br>Убедитесь, что API запущен и CORS включен.<br>Check console (F12).
+                </td></tr>`;
+            }
+        }
+
+        async function createEmployee(event) {
+            event.preventDefault(); 
+            toggleLoading(true);
+
+            const deptIdVal = document.getElementById('departmentId').value;
+            const mgrIdVal = document.getElementById('managerId').value;
+
+            const newEmployeeDto = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                hireDate: document.getElementById('hireDate').value, 
+                departmentId: deptIdVal ? parseInt(deptIdVal) : null,
+                managerId: mgrIdVal ? parseInt(mgrIdVal) : null
+            };
+
+            console.log("Отправляем JSON:", JSON.stringify(newEmployeeDto));
+
+            try {
+                const response = await fetch(ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(newEmployeeDto)
+                });
+
+                if (response.ok) {
+                    showToast('Сотрудник успешно добавлен!');
+                    createForm.reset(); 
+                    loadEmployees(); 
+                } else {
+                    const errorText = await response.text();
+                    showToast(`Ошибка при создании: ${response.status} ${errorText}`, true);
+                    console.error("Server error:", errorText);
+                }
+            } catch (error) {
+                showToast(`Ошибка сети: ${error.message}`, true);
+            } finally {
+                toggleLoading(false);
+            }
+        }
+
+        async function deleteEmployee(id) {
+            if (!confirm(`Вы уверены, что хотите удалить сотрудника ID: ${id}?`)) return;
+
+            try {
+                const response = await fetch(`${ENDPOINT}/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    showToast(`Сотрудник #${id} удален.`);
+                    loadEmployees();
+                } else {
+                    showToast(`Не удалось удалить: ${response.status}`, true);
+                }
+            } catch (error) {
+                showToast(`Ошибка сети: ${error.message}`, true);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadEmployees);
+
     </script>
 </body>
 </html>
