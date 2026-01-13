@@ -9,7 +9,7 @@ namespace EmployeesManagement.Application.Services
     {
         private readonly IEmployeeRepository _employeeRepository = employeeRepository;
 
-        public async Task<Employee> CreateAsync(EmployeeDTO dto)
+        public async Task<EmployeeDTO> CreateAsync(EmployeeDTO dto)
         {
             ArgumentNullException.ThrowIfNull(dto);
 
@@ -26,6 +26,24 @@ namespace EmployeesManagement.Application.Services
             await _employeeRepository.AddAsync(employee);
 
             return employee;
+        }
+
+        public async Task<EmployeeDTO> DeleteAsync(long id)
+        {
+            var emplyee = await _employeeRepository.GetByIdAsync(id) 
+                ?? throw new KeyNotFoundException($"Employee with id {id} not found.");
+            
+            await _employeeRepository.Delete(emplyee);
+            
+            return new EmployeeDTO
+            {
+                EmployeeId = emplyee.Id,
+                FirstName = emplyee.FirstName,
+                LastName = emplyee.LastName,
+                HireDate = emplyee.HireDate,
+                ManagerId = emplyee.ManagerId,
+                DepartmentId = emplyee.DepartmentId
+            };
         }
 
         public async Task<IEnumerable<EmployeeDTO>> GetAllAsync()
@@ -54,6 +72,21 @@ namespace EmployeesManagement.Application.Services
                 ManagerId = emplyee.ManagerId,
                 DepartmentId = emplyee.DepartmentId
             };
+        }
+
+        public async Task<EmployeeDTO> UpdateAsync(long id, EmployeeDTO dto)
+        {
+            await _employeeRepository.Update(new Employee
+            {
+                Id = dto.EmployeeId,
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                HireDate = dto.HireDate,
+                ManagerId = dto.ManagerId,
+                DepartmentId = dto.DepartmentId
+            });
+
+            return dto;
         }
     }
 }
