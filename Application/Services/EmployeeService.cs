@@ -25,7 +25,7 @@ namespace EmployeesManagement.Application.Services
 
             await _employeeRepository.AddAsync(employee);
 
-            return employee;
+            return dto;
         }
 
         public async Task<EmployeeDTO> DeleteAsync(long id)
