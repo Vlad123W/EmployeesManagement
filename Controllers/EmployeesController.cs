@@ -37,7 +37,7 @@ namespace EmployeesManagement.Controllers
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Put(int id, [FromBody] EmployeeDTO employee)
         {
-            return Ok();
+            return Ok(await _employeeService.UpdateAsync(id, employee));
         }
 
         [HttpDelete("{id:int}")]
