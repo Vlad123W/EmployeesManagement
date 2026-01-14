@@ -1,7 +1,8 @@
-﻿using EmployeesManagemant.Domain.Entities;
+﻿using AutoMapper;
+using EmployeesManagemant.Domain.Entities;
 using EmployeesManagemant.Domain.Interfaces;
 using EmployeesManagement.Application.Interfaces;
-using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmployeesManagement.Application.Services
 {
@@ -61,6 +62,23 @@ namespace EmployeesManagement.Application.Services
             });
         }
 
+        public async Task<IEnumerable<EmployeeDTO>> GetAllAsync(int countOfEmployees)
+        {
+            var emplyees = await _employeeRepository.GetAllAsync();
+
+            ArgumentNullException.ThrowIfNull(emplyees);
+
+            return emplyees.Take(countOfEmployees).Select(empl => new EmployeeDTO
+            {
+                EmployeeId = empl.Id,
+                FirstName = empl.FirstName,
+                LastName = empl.LastName,
+                HireDate = empl.HireDate,
+                ManagerId = empl.ManagerId,
+                DepartmentId = empl.DepartmentId
+            }).Take(countOfEmployees);
+        }
+
         public async Task<EmployeeDTO> GetByIdAsync(long id)
         {
             var emplyee = await _employeeRepository.GetByIdAsync(id);
@@ -75,19 +93,21 @@ namespace EmployeesManagement.Application.Services
             };
         }
 
-        public async Task<EmployeeDTO> UpdateAsync(long id, EmployeeDTO dto)
+        public async Task<bool> UpdateAsync(long id, EmployeeDTO dto)
         {
-            await _employeeRepository.Update(new Employee
-            {
-                Id = dto.EmployeeId,
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                HireDate = dto.HireDate,
-                ManagerId = dto.ManagerId,
-                DepartmentId = dto.DepartmentId
-            });
+            var employee = await _employeeRepository.GetByIdAsync(id);
 
-            return dto;
+            if (employee == null) return false; 
+                        
+            employee.FirstName = dto.FirstName;
+            employee.LastName = dto.LastName;
+            employee.HireDate = dto.HireDate;
+            employee.DepartmentId = dto.DepartmentId;
+            employee.ManagerId = dto.ManagerId;
+
+            await _employeeRepository.Update(employee);
+
+            return true;
         }
     }
 }

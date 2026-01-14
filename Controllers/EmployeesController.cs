@@ -19,7 +19,7 @@ namespace EmployeesManagement.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            return Ok(await _employeeService.GetAllAsync());
+            return Ok(await _employeeService.GetAllAsync(5));
         }
 
         [HttpGet("{id:int}")]
