@@ -52,6 +52,10 @@
         .loading-spinner {
             display: none;
         }
+        .search-highlight {
+            background-color: yellow;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -105,12 +109,22 @@
 
             <div class="col-lg-8">
                 <div class="card h-100">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <span><i class="bi bi-list-ul me-2 text-primary"></i>Список сотрудников</span>
-                        <button class="btn btn-outline-secondary btn-sm" onclick="loadEmployees()"><i class="bi bi-arrow-clockwise"></i></button>
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-md-4">
+                                <span><i class="bi bi-list-ul me-2 text-primary"></i>Сотрудники</span>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                                    <input type="text" id="searchInput" class="form-control border-start-0" placeholder="Поиск по имени, фамилии или ID..." oninput="filterEmployees()">
+                                    <button class="btn btn-outline-secondary" onclick="loadEmployees()"><i class="bi bi-arrow-clockwise"></i></button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body p-0 table-responsive">
-                        <table class="table table-hover mb-0 align-middle">
+                        <table class="table table-hover mb-0 align-middle" id="employeeTable">
                             <thead class="table-light">
                                 <tr>
                                     <th>ID</th>
@@ -194,6 +208,25 @@
             toast.show();
         }
 
+        function filterEmployees() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const rows = tableBody.getElementsByTagName('tr');
+
+            for (let row of rows) {
+                if (row.cells.length > 1) {
+                    const id = row.cells[0].textContent.toLowerCase();
+                    const name = row.cells[1].textContent.toLowerCase();
+
+                    // Если запрос найден в ID или в ФИО
+                    if (id.includes(query) || name.includes(query)) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                }
+            }
+        }
+
         async function loadEmployees() {
             tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4">Загрузка...</td></tr>';
             try {
@@ -202,23 +235,24 @@
                 tableBody.innerHTML = '';
                 data.forEach(emp => {
                     const row = `
-                        <tr>
-                            <td><strong>#${emp.employeeId}</strong></td>
-                            <td>${emp.firstName} ${emp.lastName}</td>
-                            <td>${new Date(emp.hireDate).toLocaleDateString('ru-RU')}</td>
-                            <td><span class="badge bg-light text-dark border">${emp.departmentId || '-'}</span></td>
-                            <td><span class="badge bg-light text-dark border">${emp.managerId || '-'}</span></td>
-                            <td class="text-end">
-                                <button class="btn btn-outline-primary btn-sm me-1" onclick="openEditModal(${JSON.stringify(emp).replace(/"/g, '&quot;')})">
-                                    <i class="bi bi-pencil-square"></i>
-                                </button>
-                                <button class="btn btn-outline-danger btn-sm" onclick="deleteEmployee(${emp.employeeId})">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </td>
-                        </tr>`;
+                            <tr>
+                                <td><strong>#${emp.employeeId}</strong></td>
+                                <td>${emp.firstName} ${emp.lastName}</td>
+                                <td>${new Date(emp.hireDate).toLocaleDateString('ru-RU')}</td>
+                                <td><span class="badge bg-light text-dark border">${emp.departmentId || '-'}</span></td>
+                                <td><span class="badge bg-light text-dark border">${emp.managerId || '-'}</span></td>
+                                <td class="text-end">
+                                    <button class="btn btn-outline-primary btn-sm me-1" onclick="openEditModal(${JSON.stringify(emp).replace(/"/g, '&quot;')})">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                    <button class="btn btn-outline-danger btn-sm" onclick="deleteEmployee(${emp.employeeId})">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>`;
                     tableBody.innerHTML += row;
                 });
+                filterEmployees();
             } catch (e) { showToast("Ошибка загрузки", true); }
         }
 
@@ -244,7 +278,7 @@
             document.getElementById('editIdTitle').textContent = emp.employeeId;
             document.getElementById('editFirstName').value = emp.firstName;
             document.getElementById('editLastName').value = emp.lastName;
-            document.getElementById('editHireDate').value = emp.hireDate.split('T')[0]; 
+            document.getElementById('editHireDate').value = emp.hireDate.split('T')[0];
             document.getElementById('editDepartmentId').value = emp.departmentId || '';
             document.getElementById('editManagerId').value = emp.managerId || '';
             editModal.show();
