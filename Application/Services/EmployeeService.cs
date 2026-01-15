@@ -85,6 +85,7 @@ namespace EmployeesManagement.Application.Services
 
             return new EmployeeDTO
             {
+                EmployeeId = emplyee!.Id,
                 FirstName = emplyee!.FirstName,
                 LastName = emplyee.LastName,
                 HireDate = emplyee.HireDate,

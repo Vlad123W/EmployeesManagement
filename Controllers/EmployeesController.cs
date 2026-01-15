@@ -17,33 +17,33 @@ namespace EmployeesManagement.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IEnumerable<EmployeeDTO>> Get()
         {
-            return Ok(await _employeeService.GetAllAsync());
+            return await _employeeService.GetAllAsync();
         }
 
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<EmployeeDTO> Get(int id)
         {
-            return Ok(await _employeeService.GetByIdAsync(id));
+            return await _employeeService.GetByIdAsync(Convert.ToInt64(id));
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] EmployeeDTO employee)
+        public async Task<EmployeeDTO> Post([FromBody] EmployeeDTO employee)
         {
-            return Ok(await _employeeService.CreateAsync(employee));
+            return await _employeeService.CreateAsync(employee);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Put(int id, [FromBody] EmployeeDTO employee)
+        public async Task<bool> Put(int id, [FromBody] EmployeeDTO employee)
         {
-            return Ok(await _employeeService.UpdateAsync(id, employee));
+            return await _employeeService.UpdateAsync(id, employee);
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<EmployeeDTO> Delete(int id)
         {
-            return Ok(await _employeeService.DeleteAsync(id));
+            return await _employeeService.DeleteAsync(id);
         }
     }
 }
