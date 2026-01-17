@@ -13,14 +13,5 @@ namespace EmployeesManagemant.Infrastructure.Repositories
                 .Where(e => e.DepartmentId == departmentId)
                 .ToListAsync();
         }
-
-        public async Task<Employee?> GetWithDetailsAsync(long id)
-        {
-            return await _dbSet
-                .Include(e => e.Job)
-                .Include(e => e.Department)
-                .Include(e => e.Manager)
-                .FirstOrDefaultAsync(e => e.Id == id);
-        }
     }
 }

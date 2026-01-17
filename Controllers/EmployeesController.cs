@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using EmployeesManagemant.Domain.Interfaces;
 using EmployeesManagemant.Domain.Entities;
 using EmployeesManagement.Application.Interfaces;
 
@@ -17,33 +16,47 @@ namespace EmployeesManagement.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<EmployeeDTO>> Get()
+        public async Task<IActionResult> Get()
         {
-            return await _employeeService.GetAllAsync();
+            var employees = await _employeeService.GetAllAsync();
+
+            if (employees == null) return NotFound(employees);
+
+            return Ok(employees);
         }
 
         [HttpGet("{id:int}")]
-        public async Task<EmployeeDTO> Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            return await _employeeService.GetByIdAsync(Convert.ToInt64(id));
+            var employee = await _employeeService.GetByIdAsync(id);
+
+            if (employee == null) return BadRequest(employee);
+
+            return Ok(employee);
         }
 
         [HttpPost]
-        public async Task<EmployeeDTO> Post([FromBody] EmployeeDTO employee)
+        public async Task<IActionResult> Post([FromBody] EmployeeDTO employee)
         {
-            return await _employeeService.CreateAsync(employee);
+            if(employee == null) return BadRequest(employee);
+
+            return Ok(await _employeeService.CreateAsync(employee));
         }
 
         [HttpPut("{id:int}")]
-        public async Task<bool> Put(int id, [FromBody] EmployeeDTO employee)
+        public async Task<IActionResult> Put(int id, [FromBody] EmployeeDTO employee)
         {
-            return await _employeeService.UpdateAsync(id, employee);
+            if(employee == null) return BadRequest(employee);
+
+            return Ok(await _employeeService.UpdateAsync(id, employee));
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<EmployeeDTO> Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            return await _employeeService.DeleteAsync(id);
+            if(await _employeeService.GetByIdAsync(id) == null) return NotFound(id);
+
+            return Ok(await _employeeService.DeleteAsync(id));
         }
     }
 }

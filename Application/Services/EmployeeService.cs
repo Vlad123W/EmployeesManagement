@@ -1,8 +1,6 @@
-﻿using AutoMapper;
-using EmployeesManagemant.Domain.Entities;
+﻿using EmployeesManagemant.Domain.Entities;
 using EmployeesManagemant.Domain.Interfaces;
 using EmployeesManagement.Application.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace EmployeesManagement.Application.Services
 {
@@ -12,7 +10,10 @@ namespace EmployeesManagement.Application.Services
 
         public async Task<EmployeeDTO> CreateAsync(EmployeeDTO dto)
         {
-            ArgumentNullException.ThrowIfNull(dto);
+            if (dto == null)
+            {
+                throw new ArgumentNullException(nameof(dto), "Employee data cannot be null");
+            }
 
             var employee = new Employee
             {

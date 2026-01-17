@@ -18,7 +18,6 @@ namespace EmployeesManagemant.Domain.Interfaces
     public interface IEmployeeRepository : IGenericRepository<Employee>
     {
         Task<IEnumerable<Employee>> GetEmployeesByDepartmentAsync(long departmentId);
-        Task<Employee?> GetWithDetailsAsync(long id);
     }
    
     public interface IDepartmentRepository : IGenericRepository<Department>
