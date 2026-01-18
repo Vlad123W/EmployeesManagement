@@ -2,13 +2,9 @@
 
 namespace EmployeesManagement.Application.Interfaces
 {
-    public interface IEmployeeService
+    public interface IEmployeeService : IGenericService<EmployeeDTO>
     {
-        Task<IEnumerable<EmployeeDTO>> GetAllAsync();
-        Task<EmployeeDTO> GetByIdAsync(long id);
         Task<IEnumerable<EmployeeDTO>> GetAllAsync(int countOfEmployees);
-        Task<EmployeeDTO> CreateAsync(EmployeeDTO dto);
-        Task<EmployeeDTO> UpdateAsync(long id, EmployeeDTO dto);
-        Task<EmployeeDTO> DeleteAsync(long id);
+        Task<EmployeeDTO> GetByIdAsync(long id);
     }
 }
