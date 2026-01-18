@@ -5,14 +5,9 @@ namespace EmployeesManagement.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CountriesController : ControllerBase
+    public class CountriesController(ICountryService countryService) : ControllerBase
     {
-        private readonly ICountryService _countryService;
-        
-        public CountriesController(ICountryService countryService)
-        {
-            _countryService = countryService;
-        }
+        private readonly ICountryService _countryService = countryService;
 
         [HttpGet]
         public async Task<IActionResult> Get()

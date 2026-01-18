@@ -8,29 +8,66 @@ namespace EmployeesManagement.Application.Services
     {
         private readonly IGenericRepository<Country> _countryRepository = countryRepository;
 
-        public Task<CountryDTO> CreateAsync(CountryDTO dto)
+        public async Task<CountryDTO> CreateAsync(CountryDTO dto)
+        {
+            if (dto == null)
+            {
+                throw new ArgumentNullException(nameof(dto), "Country data cannot be null");
+            }
+
+            var countryEntity = new Country
+            {
+                Id = dto.CountryId,
+                CountryName = dto.CountryName,
+                RegionId = dto.RegionId
+            };
+
+            await _countryRepository.AddAsync(countryEntity);
+
+            return dto;
+        }
+
+        public Task<CountryDTO> DeleteAsync(string id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<CountryDTO> DeleteAsync(long id)
+        public async Task<IEnumerable<CountryDTO>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var countries = await _countryRepository.GetAllAsync();
+
+            return countries.Select(x => new CountryDTO
+            {
+                CountryId = x.Id,
+                CountryName = x.CountryName,
+                RegionId = x.RegionId
+            });
         }
 
-        public Task<IEnumerable<CountryDTO>> GetAllAsync()
+        public async Task<CountryDTO> GetByIdAsync(string id)
         {
-            throw new NotImplementedException();
+            var country = await _countryRepository.GetByIdAsync(id);
+
+            return new CountryDTO
+            {
+                CountryId = country.Id,
+                CountryName = country.CountryName,
+                RegionId = country.RegionId
+            };
         }
 
-        public Task<CountryDTO> GetByIdAsync(string id)
+        public async Task<CountryDTO> UpdateAsync(string id, CountryDTO dto)
         {
-            throw new NotImplementedException();
-        }
+            ArgumentNullException.ThrowIfNull(dto);
 
-        public Task<CountryDTO> UpdateAsync(long id, CountryDTO dto)
-        {
-            throw new NotImplementedException();
+            await _countryRepository.Update(new Country
+            {
+                Id = id,
+                CountryName = dto.CountryName,
+                RegionId = dto.RegionId
+            });
+
+            return dto;
         }
     }
 }
