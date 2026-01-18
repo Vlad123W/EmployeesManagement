@@ -95,12 +95,12 @@ namespace EmployeesManagement.Application.Services
             };
         }
 
-        public async Task<bool> UpdateAsync(long id, EmployeeDTO dto)
+        public async Task<EmployeeDTO> UpdateAsync(long id, EmployeeDTO dto)
         {
             var employee = await _employeeRepository.GetByIdAsync(id);
 
-            if (employee == null) return false; 
-                        
+            if (employee == null) throw new KeyNotFoundException($"Employee with id {id} not found.");
+
             employee.FirstName = dto.FirstName;
             employee.LastName = dto.LastName;
             employee.HireDate = dto.HireDate;
@@ -109,7 +109,15 @@ namespace EmployeesManagement.Application.Services
 
             await _employeeRepository.Update(employee);
 
-            return true;
+            return new EmployeeDTO
+            {
+                EmployeeId = employee.Id,
+                FirstName = employee.FirstName,
+                LastName = employee.LastName,
+                HireDate = employee.HireDate,
+                ManagerId = employee.ManagerId,
+                DepartmentId = employee.DepartmentId
+            };
         }
     }
 }
