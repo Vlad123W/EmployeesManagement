@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HR API Tester</title>
+    <title>HR Management Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
         body {
             background-color: #f0f2f5;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
         }
 
         .main-container {
-            margin-top: 40px;
+            margin-top: 30px;
             margin-bottom: 40px;
         }
 
@@ -25,239 +25,194 @@
 
         .card-header {
             background: white;
-            border-bottom: 2px solid #f0f2f5;
             font-weight: 600;
-            padding: 1.2rem;
+            border-bottom: 1px solid #eee;
             border-radius: 12px 12px 0 0 !important;
         }
 
-        .btn-primary {
+        .nav-pills .nav-link.active {
             background-color: #0d6efd;
-            border: none;
-            padding: 10px 20px;
-            font-weight: 500;
-        }
-
-        .table thead th {
-            background-color: #f8f9fa;
-            border-bottom: 2px solid #dee2e6;
-            color: #495057;
-        }
-
-        .form-label {
-            font-weight: 500;
-            color: #495057;
         }
 
         .loading-spinner {
             display: none;
-        }
-        .search-highlight {
-            background-color: yellow;
-            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
     <div class="container main-container">
-        <div class="row mb-4">
-            <div class="col">
-                <h2 class="fw-bold text-primary"><i class="bi bi-people-fill me-2"></i>HR Management System</h2>
-                <p class="text-muted">Панель тестирования API для репозитория EmployeesManagement</p>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold text-primary"><i class="bi bi-building me-2"></i>HR Management System</h2>
+                <p class="text-muted mb-0">Управление сотрудниками и географией компании</p>
             </div>
+            <ul class="nav nav-pills" id="pills-tab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="pills-employees-tab" data-bs-toggle="pill" data-bs-target="#pills-employees" type="button" role="tab"><i class="bi bi-people me-2"></i>Сотрудники</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-countries-tab" data-bs-toggle="pill" data-bs-target="#pills-countries" type="button" role="tab"><i class="bi bi-globe me-2"></i>Страны</button>
+                </li>
+            </ul>
         </div>
 
-        <div class="row g-4">
-            <div class="col-lg-4">
-                <div class="card h-100">
-                    <div class="card-header"><span><i class="bi bi-person-plus-fill me-2 text-success"></i>Новый сотрудник</span></div>
-                    <div class="card-body p-4">
-                        <form id="createForm" onsubmit="createEmployee(event)">
-                            <div class="mb-3">
-                                <label class="form-label">Имя *</label>
-                                <input type="text" class="form-control" id="firstName" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Фамилия *</label>
-                                <input type="text" class="form-control" id="lastName" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Дата найма *</label>
-                                <input type="date" class="form-control" id="hireDate" required>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col">
-                                    <label class="form-label">ID Отдела</label>
-                                    <input type="number" class="form-control" id="departmentId">
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-employees" role="tabpanel">
+                <div class="row g-4">
+                    <div class="col-lg-4">
+                        <div class="card p-4">
+                            <h5 class="mb-3 fw-bold"><i class="bi bi-person-plus text-success me-2"></i>Добавить сотрудника</h5>
+                            <form id="createEmployeeForm" onsubmit="createEmployee(event)">
+                                <div class="mb-3"><label class="form-label">Имя</label><input type="text" class="form-control" id="firstName" required></div>
+                                <div class="mb-3"><label class="form-label">Фамилия</label><input type="text" class="form-control" id="lastName" required></div>
+                                <div class="mb-3"><label class="form-label">Дата найма</label><input type="date" class="form-control" id="hireDate" required></div>
+                                <div class="row mb-3">
+                                    <div class="col"><label class="form-label">ID Отдела</label><input type="number" class="form-control" id="departmentId"></div>
+                                    <div class="col"><label class="form-label">ID Менеджера</label><input type="number" class="form-control" id="managerId"></div>
                                 </div>
-                                <div class="col">
-                                    <label class="form-label">ID Менеджера</label>
-                                    <input type="number" class="form-control" id="managerId">
-                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Добавить</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="card h-100">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span>Список сотрудников</span>
+                                <input type="text" id="employeeSearch" class="form-control form-control-sm w-50" placeholder="Поиск..." oninput="filterTable('employeesTableBody', this.value)">
                             </div>
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary btn-lg">
-                                    <span class="loading-spinner spinner-border spinner-border-sm me-2"></span>
-                                    <i class="bi bi-send me-2"></i>Добавить
-                                </button>
+                            <div class="card-body p-0 table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light"><tr><th>ID</th><th>ФИО</th><th>Дата</th><th>Отдел</th><th>Менеджер</th><th class="text-end">Действия</th></tr></thead>
+                                    <tbody id="employeesTableBody"></tbody>
+                                </table>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-lg-8">
-                <div class="card h-100">
-                    <div class="card-header">
-                        <div class="row align-items-center">
-                            <div class="col-md-4">
-                                <span><i class="bi bi-list-ul me-2 text-primary"></i>Сотрудники</span>
-                            </div>
-                            <div class="col-md-8">
-                                <div class="input-group">
-                                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
-                                    <input type="text" id="searchInput" class="form-control border-start-0" placeholder="Поиск по имени, фамилии или ID..." oninput="filterEmployees()">
-                                    <button class="btn btn-outline-secondary" onclick="loadEmployees()"><i class="bi bi-arrow-clockwise"></i></button>
+            <div class="tab-pane fade" id="pills-countries" role="tabpanel">
+                <div class="row g-4">
+                    <div class="col-lg-4">
+                        <div class="card p-4">
+                            <h5 class="mb-3 fw-bold"><i class="bi bi-globe-americas text-primary me-2"></i>Новая страна</h5>
+                            <form id="createCountryForm" onsubmit="createCountry(event)">
+                                <div class="mb-3">
+                                    <label class="form-label">Код страны (ID)</label>
+                                    <input type="text" class="form-control" id="countryId" required placeholder="Напр: UK">
                                 </div>
-                            </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Название страны</label>
+                                    <input type="text" class="form-control" id="countryName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">ID Региона</label>
+                                    <input type="number" class="form-control" id="regionId">
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Сохранить</button>
+                            </form>
                         </div>
                     </div>
-                    <div class="card-body p-0 table-responsive">
-                        <table class="table table-hover mb-0 align-middle" id="employeeTable">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>ФИО</th>
-                                    <th>Дата найма</th>
-                                    <th>Отдел</th>
-                                    <th>Менеджер</th>
-                                    <th class="text-end">Действия</th>
-                                </tr>
-                            </thead>
-                            <tbody id="employeesTableBody"></tbody>
-                        </table>
+                    <div class="col-lg-8">
+                        <div class="card h-100">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span>Зарегистрированные страны</span>
+                                <input type="text" class="form-control form-control-sm w-50" placeholder="Поиск стран..." oninput="filterTable('countriesTableBody', this.value)">
+                            </div>
+                            <div class="card-body p-0 table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light"><tr><th>Код (ID)</th><th>Название</th><th>Регион ID</th><th class="text-end">Действия</th></tr></thead>
+                                    <tbody id="countriesTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="editEmployeeModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Редактировать сотрудника #<span id="editIdTitle"></span></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="editForm" onsubmit="updateEmployee(event)">
+                <div class="modal-header"><h5 class="modal-title">Редактировать сотрудника</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <form onsubmit="updateEmployee(event)">
                     <div class="modal-body">
-                        <input type="hidden" id="editId">
-                        <div class="mb-3">
-                            <label class="form-label">Имя</label>
-                            <input type="text" class="form-control" id="editFirstName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Фамилия</label>
-                            <input type="text" class="form-control" id="editLastName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Дата найма</label>
-                            <input type="date" class="form-control" id="editHireDate" required>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <label class="form-label">ID Отдела</label>
-                                <input type="number" class="form-control" id="editDepartmentId">
-                            </div>
-                            <div class="col">
-                                <label class="form-label">ID Менеджера</label>
-                                <input type="number" class="form-control" id="editManagerId">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                        <button type="submit" class="btn btn-success">Сохранить изменения</button>
-                    </div>
+                        <input type="hidden" id="editEmpId">
+                        <div class="mb-3"><label class="form-label">Имя</label><input type="text" class="form-control" id="editEmpFirstName" required></div>
+                        <div class="mb-3"><label class="form-label">Фамилия</label><input type="text" class="form-control" id="editEmpLastName" required></div>
+                        <div class="mb-3"><label class="form-label">Дата найма</label><input type="date" class="form-control" id="editEmpHireDate" required></div>
+                    </div><div class="modal-footer"><button type="submit" class="btn btn-success">Обновить</button></div>
                 </form>
             </div>
         </div>
     </div>
 
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="liveToast" class="toast align-items-center text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex"><div class="toast-body" id="toastMessage"></div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>
+    <div class="modal fade" id="editCountryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title">Редактировать страну</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <form onsubmit="updateCountry(event)">
+                    <div class="modal-body">
+                        <input type="hidden" id="editCountryId">
+                        <div class="mb-3"><label class="form-label">Название страны</label><input type="text" class="form-control" id="editCountryName" required></div>
+                        <div class="mb-3"><label class="form-label">ID Региона</label><input type="number" class="form-control" id="editRegionId"></div>
+                    </div><div class="modal-footer"><button type="submit" class="btn btn-success">Сохранить изменения</button></div>
+                </form>
+            </div>
         </div>
     </div>
 
+    <div class="toast-container position-fixed bottom-0 end-0 p-3"><div id="liveToast" class="toast align-items-center text-white border-0" role="alert"><div class="d-flex"><div class="toast-body" id="toastMessage"></div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div></div></div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const API_BASE_URL = 'https://localhost:7160';
-        const ENDPOINT = `${API_BASE_URL}/api/employeesmanagement`;
+        const API_BASE_URL = 'https://localhost:7160/api';
+        const EMP_ENDPOINT = `${API_BASE_URL}/employees`;
+        const COUNTRY_ENDPOINT = `${API_BASE_URL}/countries`; // Твой новый контроллер
 
-        const tableBody = document.getElementById('employeesTableBody');
         const toast = new bootstrap.Toast(document.getElementById('liveToast'));
-        const editModal = new bootstrap.Modal(document.getElementById('editModal'));
+        const editEmpModal = new bootstrap.Modal(document.getElementById('editEmployeeModal'));
+        const editCountryModal = new bootstrap.Modal(document.getElementById('editCountryModal'));
 
         function showToast(message, isError = false) {
             const toastEl = document.getElementById('liveToast');
             document.getElementById('toastMessage').textContent = message;
-            toastEl.classList.remove('bg-success', 'bg-danger');
-            toastEl.classList.add(isError ? 'bg-danger' : 'bg-success');
+            toastEl.className = `toast align-items-center text-white border-0 bg-${isError ? 'danger' : 'success'}`;
             toast.show();
         }
 
-        function filterEmployees() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const rows = tableBody.getElementsByTagName('tr');
-
+        // --- ОБЩИЙ ПОИСК ---
+        function filterTable(tbodyId, query) {
+            const rows = document.getElementById(tbodyId).getElementsByTagName('tr');
             for (let row of rows) {
-                if (row.cells.length > 1) {
-                    const id = row.cells[0].textContent.toLowerCase();
-                    const name = row.cells[1].textContent.toLowerCase();
-
-                    // Если запрос найден в ID или в ФИО
-                    if (id.includes(query) || name.includes(query)) {
-                        row.style.display = "";
-                    } else {
-                        row.style.display = "none";
-                    }
-                }
+                row.style.display = row.textContent.toLowerCase().includes(query.toLowerCase()) ? "" : "none";
             }
         }
 
+        // === ЛОГИКА СОТРУДНИКОВ ===
         async function loadEmployees() {
-            tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4">Загрузка...</td></tr>';
-            try {
-                const response = await fetch(ENDPOINT);
-                const data = await response.json();
-                tableBody.innerHTML = '';
-                data.forEach(emp => {
-                    const row = `
-                            <tr>
-                                <td><strong>#${emp.employeeId}</strong></td>
-                                <td>${emp.firstName} ${emp.lastName}</td>
-                                <td>${new Date(emp.hireDate).toLocaleDateString('ru-RU')}</td>
-                                <td><span class="badge bg-light text-dark border">${emp.departmentId || '-'}</span></td>
-                                <td><span class="badge bg-light text-dark border">${emp.managerId || '-'}</span></td>
-                                <td class="text-end">
-                                    <button class="btn btn-outline-primary btn-sm me-1" onclick="openEditModal(${JSON.stringify(emp).replace(/"/g, '&quot;')})">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </button>
-                                    <button class="btn btn-outline-danger btn-sm" onclick="deleteEmployee(${emp.employeeId})">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>`;
-                    tableBody.innerHTML += row;
-                });
-                filterEmployees();
-            } catch (e) { showToast("Ошибка загрузки", true); }
+            const res = await fetch(EMP_ENDPOINT);
+            const data = await res.json();
+            const tbody = document.getElementById('employeesTableBody');
+            tbody.innerHTML = data.map(emp => `
+                <tr>
+                    <td>#${emp.employeeId}</td>
+                    <td>${emp.firstName} ${emp.lastName}</td>
+                    <td>${new Date(emp.hireDate).toLocaleDateString()}</td>
+                    <td>${emp.departmentId || '-'}</td>
+                    <td>${emp.managerId || '-'}</td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick='openEditEmp(${JSON.stringify(emp)})'><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${EMP_ENDPOINT}', ${emp.employeeId}, loadEmployees)"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
         }
 
-        async function createEmployee(event) {
-            event.preventDefault();
+        async function createEmployee(e) {
+            e.preventDefault();
             const dto = {
                 firstName: document.getElementById('firstName').value,
                 lastName: document.getElementById('lastName').value,
@@ -265,58 +220,90 @@
                 departmentId: parseInt(document.getElementById('departmentId').value) || null,
                 managerId: parseInt(document.getElementById('managerId').value) || null
             };
-            const response = await fetch(ENDPOINT, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dto)
-            });
-            if (response.ok) { showToast("Добавлен!"); loadEmployees(); event.target.reset(); }
+            const res = await fetch(EMP_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dto) });
+            if (res.ok) { showToast("Сотрудник добавлен"); loadEmployees(); e.target.reset(); }
         }
 
-        function openEditModal(emp) {
-            document.getElementById('editId').value = emp.employeeId;
-            document.getElementById('editIdTitle').textContent = emp.employeeId;
-            document.getElementById('editFirstName').value = emp.firstName;
-            document.getElementById('editLastName').value = emp.lastName;
-            document.getElementById('editHireDate').value = emp.hireDate.split('T')[0];
-            document.getElementById('editDepartmentId').value = emp.departmentId || '';
-            document.getElementById('editManagerId').value = emp.managerId || '';
-            editModal.show();
+        function openEditEmp(emp) {
+            document.getElementById('editEmpId').value = emp.employeeId;
+            document.getElementById('editEmpFirstName').value = emp.firstName;
+            document.getElementById('editEmpLastName').value = emp.lastName;
+            document.getElementById('editEmpHireDate').value = emp.hireDate.split('T')[0];
+            editEmpModal.show();
         }
 
-        async function updateEmployee(event) {
-            event.preventDefault();
-            const id = document.getElementById('editId').value;
+        async function updateEmployee(e) {
+            e.preventDefault();
+            const id = document.getElementById('editEmpId').value;
             const dto = {
-                firstName: document.getElementById('editFirstName').value,
-                lastName: document.getElementById('editLastName').value,
-                hireDate: document.getElementById('editHireDate').value,
-                departmentId: parseInt(document.getElementById('editDepartmentId').value) || null,
-                managerId: parseInt(document.getElementById('editManagerId').value) || null
+                firstName: document.getElementById('editEmpFirstName').value,
+                lastName: document.getElementById('editEmpLastName').value,
+                hireDate: document.getElementById('editEmpHireDate').value
             };
+            const res = await fetch(`${EMP_ENDPOINT}/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dto) });
+            if (res.ok) { showToast("Данные обновлены"); editEmpModal.hide(); loadEmployees(); }
+        }
 
+        // === ЛОГИКА СТРАН ===
+        async function loadCountries() {
             try {
-                const response = await fetch(`${ENDPOINT}/${id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(dto)
-                });
-
-                if (response.ok) {
-                    showToast("Обновлено!");
-                    editModal.hide();
-                    loadEmployees();
-                } else { showToast("Ошибка при обновлении", true); }
-            } catch (e) { showToast("Ошибка сети", true); }
+                const res = await fetch(COUNTRY_ENDPOINT);
+                const data = await res.json();
+                const tbody = document.getElementById('countriesTableBody');
+                tbody.innerHTML = data.map(c => `
+                    <tr>
+                        <td><strong>${c.countryId}</strong></td>
+                        <td>${c.countryName}</td>
+                        <td><span class="badge bg-secondary">${c.regionId || 'N/A'}</span></td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick='openEditCountry(${JSON.stringify(c)})'><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${COUNTRY_ENDPOINT}', '${c.countryId}', loadCountries)"><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) { console.error(e); }
         }
 
-        async function deleteEmployee(id) {
-            if (!confirm("Удалить?")) return;
-            const response = await fetch(`${ENDPOINT}/${id}`, { method: 'DELETE' });
-            if (response.ok) { showToast("Удалено"); loadEmployees(); }
+        async function createCountry(e) {
+            e.preventDefault();
+            const dto = {
+                countryId: document.getElementById('countryId').value,
+                countryName: document.getElementById('countryName').value,
+                regionId: parseInt(document.getElementById('regionId').value) || null
+            };
+            const res = await fetch(COUNTRY_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dto) });
+            if (res.ok) { showToast("Страна добавлена"); loadCountries(); e.target.reset(); }
         }
 
-        loadEmployees();
+        function openEditCountry(c) {
+            document.getElementById('editCountryId').value = c.countryId;
+            document.getElementById('editCountryName').value = c.countryName;
+            document.getElementById('editRegionId').value = c.regionId || '';
+            editCountryModal.show();
+        }
+
+        async function updateCountry(e) {
+            e.preventDefault();
+            const id = document.getElementById('editCountryId').value;
+            const dto = {
+                countryName: document.getElementById('editCountryName').value,
+                regionId: parseInt(document.getElementById('editRegionId').value) || null
+            };
+            const res = await fetch(`${COUNTRY_ENDPOINT}/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dto) });
+            if (res.ok) { showToast("Страна обновлена"); editCountryModal.hide(); loadCountries(); }
+        }
+
+        async function deleteItem(url, id, callback) {
+            if (!confirm(`Удалить объект с ID: ${id}?`)) return;
+            const res = await fetch(`${url}/${id}`, { method: 'DELETE' });
+            if (res.ok) { showToast("Удалено успешно"); callback(); }
+        }
+
+        // Первичная загрузка
+        document.addEventListener('DOMContentLoaded', () => {
+            loadEmployees();
+            loadCountries();
+        });
     </script>
 </body>
 </html>
