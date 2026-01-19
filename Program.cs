@@ -1,4 +1,5 @@
 using EmployeesManagemant.Data;
+using EmployeesManagemant.Domain.Entities;
 using EmployeesManagemant.Domain.Interfaces;
 using EmployeesManagemant.Infrastructure.Repositories;
 using EmployeesManagement.Application.Interfaces;
@@ -16,6 +17,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+
+builder.Services.AddScoped<IGenericRepository<Country>, GenericRepository<Country>>();
+builder.Services.AddScoped<ICountryService, CountryService>();
+
+
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>

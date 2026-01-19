@@ -1,4 +1,5 @@
-﻿using EmployeesManagement.Application.Interfaces;
+﻿using EmployeesManagemant.Domain.Entities;
+using EmployeesManagement.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeesManagement.Controllers
@@ -12,32 +13,54 @@ namespace EmployeesManagement.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            return Ok();
+            return Ok(await _countryService.GetAllAsync());
         }
 
-        // GET api/<CountriesController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> Get(string id)
         {
-            return "value";
+            if(string.IsNullOrEmpty(id))
+            {
+                return BadRequest("Country id is required.");
+            }
+
+            return Ok(await _countryService.GetByIdAsync(id));
         }
 
-        // POST api/<CountriesController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> Post([FromBody] CountryDTO dto)
         {
+            if(dto == null)
+            {
+                return BadRequest("Country data is required.");
+            }
+
+            var createdCountry = await _countryService.CreateAsync(dto);
+            return Ok(createdCountry);
         }
 
-        // PUT api/<CountriesController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> Put(string id, [FromBody] CountryDTO dto)
         {
+            if(dto == null)
+            {
+                return BadRequest("Country data is required.");
+            }
+
+            var updatedCountry = await _countryService.UpdateAsync(id, dto);
+            return Ok(updatedCountry);
         }
 
-        // DELETE api/<CountriesController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
+            if(string.IsNullOrEmpty(id))
+            {
+                return BadRequest("Country id is required.");
+            }
+
+            var deletedCountry = await _countryService.DeleteAsync(id);
+            return Ok(deletedCountry);
         }
     }
 }

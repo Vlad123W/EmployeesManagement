@@ -1,13 +1,14 @@
-﻿using EmployeesManagemant.Domain.Interfaces;
+﻿using EmployeesManagemant.Data;
+using EmployeesManagemant.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 
 namespace EmployeesManagemant.Infrastructure.Repositories
 {
-    public class GenericRepository<T>(DbContext context) : IGenericRepository<T> where T : class
+    public class GenericRepository<T>(AppDbContext context) : IGenericRepository<T> where T : class
     {
-        protected readonly DbContext _context = context;
+        protected readonly AppDbContext _context = context;
         protected readonly DbSet<T> _dbSet = context.Set<T>();
 
         public async Task<T?> GetByIdAsync<TId>(TId id) 

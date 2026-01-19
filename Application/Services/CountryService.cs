@@ -27,9 +27,19 @@ namespace EmployeesManagement.Application.Services
             return dto;
         }
 
-        public Task<CountryDTO> DeleteAsync(string id)
+        public async Task<CountryDTO> DeleteAsync(string id)
         {
-            throw new NotImplementedException();
+            var country = await _countryRepository.GetByIdAsync(id) 
+                ?? throw new ArgumentNullException(nameof(id), "Country not found");
+            
+            await _countryRepository.Delete(country);
+
+            return new CountryDTO
+            {
+                CountryId = country.Id,
+                CountryName = country.CountryName,
+                RegionId = country.RegionId
+            };
         }
 
         public async Task<IEnumerable<CountryDTO>> GetAllAsync()
