@@ -35,6 +35,11 @@ namespace EmployeesManagement.Controllers
                 return BadRequest("Country data is required.");
             }
 
+            if(string.IsNullOrEmpty(dto.CountryId))
+            {
+                return BadRequest("Country id is required.");
+            }
+
             var createdCountry = await _countryService.CreateAsync(dto);
             return Ok(createdCountry);
         }
