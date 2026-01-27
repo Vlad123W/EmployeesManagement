@@ -2,6 +2,7 @@
   <Folder Name="/Элементы решения/">
     <File Path="TestSite.html" />
   </Folder>
+  <Project Path="../Tests/Tests.csproj" Id="bd645d34-52e2-4845-b04a-7a06d41a17ec" />
   <Project Path="Domain/Domain.csproj" Id="8b7d9f7d-f3db-4448-a551-397672c82d1f" />
   <Project Path="EmployeesManagement.csproj" />
   <Project Path="Infrastructure/Infrastructure.csproj" Id="c7057f07-aefa-439e-9eea-0549dd77472c" />

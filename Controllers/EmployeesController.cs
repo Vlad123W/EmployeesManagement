@@ -15,13 +15,27 @@ namespace EmployeesManagement.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            return Ok(await _employeeService.GetAllAsync());
+            var employees = await _employeeService.GetAllAsync();
+            
+            if(!employees.Any())
+            {
+                return NotFound("No employees found.");
+            }
+            
+            return Ok(employees);
         }
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id)
         {
-            return Ok(await _employeeService.GetByIdAsync(id));
+            var result = await _employeeService.GetByIdAsync(id);
+            
+            if (result == null)
+            {
+                return NotFound($"Incorrect id: {id}.");
+            }
+            
+            return Ok(result);
         }
 
         [HttpPost]
@@ -53,7 +67,14 @@ namespace EmployeesManagement.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
-            return Ok(await _employeeService.DeleteAsync(id));
+            var result = await _employeeService.DeleteAsync(id);
+
+            if (result == null)
+            {
+                return NotFound($"Incorrect id: {id}.");
+            }
+
+            return Ok(result);
         }
     }
 }

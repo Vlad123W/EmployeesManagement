@@ -7,12 +7,14 @@ namespace EmployeesManagemant.Domain.Interfaces
 {
     public interface IGenericRepository<T> where T : class
     {
-        Task<T?> GetByIdAsync<TId>(TId id);
+        Task<T?> GetByIdAsync<TId>(TId employeeId);
         Task<IEnumerable<T>> GetAllAsync();
         Task<IEnumerable<T>> GetPartiallyAsync(int from, int count);
         Task AddAsync(T entity);
         Task Update(T entity);
         Task Delete(T entity);
+        Task<int> GetLength();
+        Task<T> GetLast();
     }
 
     public interface IEmployeeRepository : IGenericRepository<Employee>
@@ -29,7 +31,7 @@ namespace EmployeesManagemant.Domain.Interfaces
     {
         Task<IEnumerable<JobHistory>> GetByEmployeeIdAsync(long employeeId);
     }
-   
+
     public interface IUnitOfWork : IDisposable
     {
         IEmployeeRepository Employees { get; }

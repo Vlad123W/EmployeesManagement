@@ -6,16 +6,14 @@ using System.Collections.Generic;
 
 namespace EmployeesManagemant.Infrastructure.Repositories
 {
-    public class GenericRepository<T>(AppDbContext context) : IGenericRepository<T> where T : class
+    public class GenericRepository<T>(AppDbContext context) : IGenericRepository<T>, IDisposable where T : class
     {
         protected readonly AppDbContext _context = context;
         protected readonly DbSet<T> _dbSet = context.Set<T>();
 
-        public async Task<T?> GetByIdAsync<TId>(TId id) 
-            => await _dbSet.FindAsync(id) ?? throw new ArgumentNullException(nameof(TId), $"No entities with {id} id found.");
+        public async Task<T?> GetByIdAsync<TId>(TId id) => await _dbSet.FindAsync(id);
 
-        public async Task<IEnumerable<T>> GetAllAsync() 
-            => await _dbSet.ToListAsync() ?? throw new ArgumentNullException(nameof(T), "No entities found.");
+        public async Task<IEnumerable<T>> GetAllAsync() => await _dbSet.ToListAsync();
 
         public async Task AddAsync(T entity)
         {
@@ -23,13 +21,13 @@ namespace EmployeesManagemant.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task Update(T entity) 
+        public async Task Update(T entity)
         {
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async Task Delete(T entity) 
+        public async Task Delete(T entity)
         {
             _dbSet.Remove(entity);
             await _context.SaveChangesAsync();
@@ -44,12 +42,22 @@ namespace EmployeesManagemant.Infrastructure.Repositories
                 throw new ArgumentOutOfRangeException(nameof(from), "The 'from' parameter exceeds the number of entities.");
             }
 
-            if(count < 2)
+            if (count < 2)
             {
-                throw new ArgumentOutOfRangeException(nameof(count), "The 'count' parameter cannot be less than 2.");    
+                throw new ArgumentOutOfRangeException(nameof(count), "The 'count' parameter cannot be less than 2.");
             }
 
             return await _dbSet.Skip(from).Take(count).ToListAsync();
         }
+
+        public void Dispose()
+        {
+            _context?.Dispose();
+            GC.SuppressFinalize(this);
+        }
+
+        public async Task<int> GetLength() => await _dbSet.CountAsync();
+
+        public async Task<T> GetLast() => await _dbSet.LastAsync();
     }
 }

@@ -11,11 +11,9 @@ namespace EmployeesManagement.Application.Services
 
         public async Task<EmployeeDTO> CreateAsync(EmployeeDTO dto)
         {
-            
-
             var employee = new Employee
             {
-                Id = dto.EmployeeId,
+                Id = (await _employeeRepository.GetLast()).Id + 1,
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 HireDate = dto.HireDate,
@@ -28,10 +26,16 @@ namespace EmployeesManagement.Application.Services
             return dto;
         }
 
+        /// <summary>
+        /// Gets an id of the employee to delete
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>If id is greater than the number of employees, returns null; otherwise, returns the deleted employee's DTO.</returns>
         public async Task<EmployeeDTO> DeleteAsync(long id)
         {
-            var emplyee = await _employeeRepository.GetByIdAsync(id) 
-                ?? throw new KeyNotFoundException($"Employee with id {id} not found.");
+            var emplyee = await _employeeRepository.GetByIdAsync(id);
+            
+            if(emplyee == null) return null;
             
             await _employeeRepository.Delete(emplyee);
             
@@ -50,6 +54,8 @@ namespace EmployeesManagement.Application.Services
         {
             var emplyees = await _employeeRepository.GetAllAsync();
             
+            if(!emplyees.Any()) return [];
+
             return emplyees.Select(empl => new EmployeeDTO
             {
                 EmployeeId = empl.Id,
@@ -81,7 +87,9 @@ namespace EmployeesManagement.Application.Services
         public async Task<EmployeeDTO> GetByIdAsync(long id)
         {
             var emplyee = await _employeeRepository.GetByIdAsync(id);
-
+            
+            if (emplyee == null) return null;
+            
             return new EmployeeDTO
             {
                 EmployeeId = emplyee!.Id,
@@ -92,12 +100,19 @@ namespace EmployeesManagement.Application.Services
                 DepartmentId = emplyee.DepartmentId
             };
         }
-
+        /// <summary>
+        /// Gets an id and dto of the employee to update
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="dto"></param>
+        /// <returns>Updated employee DTO if successful; otherwise, null.</returns>
         public async Task<EmployeeDTO> UpdateAsync(long id, EmployeeDTO dto)
         {
             var employee = await _employeeRepository.GetByIdAsync(id);
-
-            if (employee == null) throw new KeyNotFoundException($"Employee with id {id} not found.");
+           
+            if(employee == null) return null;
+            if(dto == null) return null;
+            if(id != dto.EmployeeId) return null;
 
             employee.FirstName = dto.FirstName;
             employee.LastName = dto.LastName;

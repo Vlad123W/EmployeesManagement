@@ -25,8 +25,6 @@ builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IGenericRepository<Country>, GenericRepository<Country>>();
 builder.Services.AddScoped<ICountryService, CountryService>();
 
-
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
