@@ -9,6 +9,11 @@ namespace EmployeesManagement.Application.Services
     {
         private readonly IEmployeeRepository _employeeRepository = employeeRepository;
 
+        /// <summary>
+        /// Creates a new employee
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns>Returns the created employee DTO</returns>
         public async Task<EmployeeDTO> CreateAsync(EmployeeDTO dto)
         {
             var employee = new Employee
@@ -50,6 +55,10 @@ namespace EmployeesManagement.Application.Services
             };
         }
 
+        /// <summary>
+        /// Gets all the employees in database
+        /// </summary>
+        /// <returns>Returns IEnumerable<EmployeeDTO> of EmployeeDTO if succesful, otherwise an empty collection.</returns>
         public async Task<IEnumerable<EmployeeDTO>> GetAllAsync()
         {
             var emplyees = await _employeeRepository.GetAllAsync();
@@ -67,6 +76,11 @@ namespace EmployeesManagement.Application.Services
             });
         }
 
+        /// <summary>
+        /// Gets a specified number of employees from the database
+        /// </summary>
+        /// <param name="countOfEmployees">The number of employees to retrieve</param>
+        /// <returns>Returns IEnumerable<EmployeeDTO> of EmployeeDTO if successful, otherwise an empty collection.</returns>
         public async Task<IEnumerable<EmployeeDTO>> GetAllAsync(int countOfEmployees)
         {
             var emplyees = await _employeeRepository.GetAllAsync();
@@ -84,6 +98,11 @@ namespace EmployeesManagement.Application.Services
             }).Take(countOfEmployees);
         }
 
+        /// <summary>
+        /// Gets specified employee by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Returns the employee DTO if found; otherwise, null.</returns>
         public async Task<EmployeeDTO> GetByIdAsync(long id)
         {
             var emplyee = await _employeeRepository.GetByIdAsync(id);
@@ -100,6 +119,7 @@ namespace EmployeesManagement.Application.Services
                 DepartmentId = emplyee.DepartmentId
             };
         }
+        
         /// <summary>
         /// Gets an id and dto of the employee to update
         /// </summary>
@@ -109,7 +129,7 @@ namespace EmployeesManagement.Application.Services
         public async Task<EmployeeDTO> UpdateAsync(long id, EmployeeDTO dto)
         {
             var employee = await _employeeRepository.GetByIdAsync(id);
-           
+            
             if(employee == null) return null;
             if(dto == null) return null;
             if(id != dto.EmployeeId) return null;

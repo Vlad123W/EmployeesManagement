@@ -41,13 +41,6 @@ namespace EmployeesManagement.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] EmployeeDTO employee)
         {
-            var validationResult = await _validator.ValidateAsync(employee);
-            
-            if (!validationResult.IsValid)
-            {
-                return BadRequest(validationResult.Errors);
-            }
-
             return Ok(await _employeeService.CreateAsync(employee));
         }
 
