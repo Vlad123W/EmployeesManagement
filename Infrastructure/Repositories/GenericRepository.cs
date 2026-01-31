@@ -1,8 +1,11 @@
-﻿using EmployeesManagemant.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using EmployeesManagemant.Data;
 using EmployeesManagemant.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace EmployeesManagemant.Infrastructure.Repositories
 {
@@ -35,16 +38,21 @@ namespace EmployeesManagemant.Infrastructure.Repositories
 
         public async Task<IEnumerable<T>> GetPartiallyAsync(int from, int count = 2)
         {
-            int countOfEntities = _dbSet.Count();
-
-            if (from - countOfEntities >= 0)
+            if (from < 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(from), "The 'from' parameter exceeds the number of entities.");
+                throw new ArgumentOutOfRangeException(nameof(from), "The 'from' parameter cannot be negative.");
             }
 
-            if (count < 2)
+            if (count < 1)
             {
-                throw new ArgumentOutOfRangeException(nameof(count), "The 'count' parameter cannot be less than 2.");
+                throw new ArgumentOutOfRangeException(nameof(count), "The 'count' parameter must be at least 1.");
+            }
+
+            var total = await _dbSet.CountAsync();
+
+            if (from >= total)
+            {
+                throw new ArgumentOutOfRangeException(nameof(from), "The 'from' parameter exceeds the number of entities.");
             }
 
             return await _dbSet.Skip(from).Take(count).ToListAsync();
@@ -58,6 +66,19 @@ namespace EmployeesManagemant.Infrastructure.Repositories
 
         public async Task<int> GetLength() => await _dbSet.CountAsync();
 
-        public async Task<T> GetLast() => await _dbSet.LastAsync();
+        public async Task<T> GetLast()
+        {
+            var entityType = _context.Model.FindEntityType(typeof(T));
+            
+            var pkProperty = entityType?.FindPrimaryKey()?.Properties.FirstOrDefault();
+
+            if (pkProperty != null)
+            {
+                string pkName = pkProperty.Name;
+                return await _dbSet.OrderByDescending(e => EF.Property<object>(e, pkName)).FirstAsync();
+            }
+
+            return await _dbSet.LastAsync();
+        }
     }
 }
